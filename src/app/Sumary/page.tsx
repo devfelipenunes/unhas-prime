@@ -63,8 +63,8 @@ export default function Summary() {
                 <div>{currentIndex === index ? "▲" : "▼"}</div>
               </button>
               {currentIndex === index && ( // Alteração: Renderizar o conteúdo apenas se currentIndex corresponder ao índice atual
-                <div className="flex flex-row justify-between w-full bg-slate-300 p-5">
-                  <ul>
+                <div className="flex flex-col justify-between w-full bg-slate-300">
+                  <ul className="py-4">
                     {data.services
                       .filter((service) => service.count > 0)
                       .map((service, idx) => (
@@ -74,8 +74,8 @@ export default function Summary() {
                         </li>
                       ))}
                   </ul>
-                  <div>
-                    <p className="text-right">Total: {formattedTotal}</p>
+                  <div className="py-4 w-full bg-slate-500">
+                    <p>Total: {formattedTotal}</p>
                     <p>Manicure receberá: {manicureShare}</p>
                   </div>
                 </div>
