@@ -3,24 +3,38 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Services() {
-  const [services, setServices] = useState([]);
-  const [totalExercises, setTotalExercises] = useState(0);
-  const [selectedName, setSelectedName] = useState("");
+interface Service {
+  servico: string;
+  preco: number;
+  count: number;
+}
+
+interface SavedData {
+  name: string;
+  services: Service[];
+}
+
+export default function Services(): JSX.Element {
+  const [services, setServices] = useState<Service[]>([]);
+  const [totalExercises, setTotalExercises] = useState<number>(0);
+  const [selectedName, setSelectedName] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
     // Recuperar o nome selecionado armazenado em localStorage
-    const name = localStorage.getItem("selectedName");
-    setSelectedName(name);
+    const name: string | null = localStorage.getItem("selectedName");
+    setSelectedName(name || "");
 
     // Recuperar os serviços salvos no localStorage de acordo com o nome selecionado
-    const savedData = JSON.parse(localStorage.getItem("savedData")) || [];
-    const selectedServices = savedData.find((data) => data.name === name);
+    const savedData: SavedData[] = JSON.parse(
+      localStorage.getItem("savedData") || "[]"
+    );
+    const selectedServices: SavedData | undefined = savedData.find(
+      (data) => data.name === name
+    );
     if (selectedServices) {
       setServices(selectedServices.services);
     } else {
-      // Se não houver serviços salvos para o nome selecionado, inicialize com os serviços padrão
       const serviceList = [
         { servico: "Mão Simples", preco: 27.99, count: 0 },
         { servico: "Mão Simples (Segunda a Quarta)", preco: 31.99, count: 0 },
@@ -74,27 +88,28 @@ export default function Services() {
         },
         { servico: "Colocação (unidade)", preco: 10.0, count: 0 },
       ];
-
       setServices(serviceList);
     }
   }, [router]);
 
   const handleSave = () => {
-    const savedData = JSON.parse(localStorage.getItem("savedData")) || [];
-    const newData = {
+    const savedData: SavedData[] = JSON.parse(
+      localStorage.getItem("savedData") || "[]"
+    );
+    const newData: SavedData = {
       name: selectedName,
       services: services,
     };
-    const updatedData = [
+    const updatedData: SavedData[] = [
       ...savedData.filter((data) => data.name !== selectedName),
       newData,
     ];
     localStorage.setItem("savedData", JSON.stringify(updatedData));
-    router.push("/Sumary");
+    router.push("/Summary");
   };
 
-  const handleServiceChange = (index, action) => {
-    const updatedServices = [...services];
+  const handleServiceChange = (index: number, action: string) => {
+    const updatedServices: Service[] = [...services];
     if (action === "increase") {
       updatedServices[index].count++;
       setTotalExercises(totalExercises + 1);
@@ -104,7 +119,7 @@ export default function Services() {
     }
     setServices(updatedServices);
 
-    localStorage.setItem("services", JSON.stringify(updatedServices)); // Ajuste aqui
+    localStorage.setItem("services", JSON.stringify(updatedServices));
   };
 
   const renderServices = () => {

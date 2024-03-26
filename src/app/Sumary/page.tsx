@@ -2,35 +2,45 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Summary() {
-  const [storedData, setStoredData] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(null); // Alteração: Inicializar currentIndex como null
+interface Service {
+  servico: string;
+  preco: number;
+  count: number;
+}
+
+interface StoredData {
+  name: string;
+  services: Service[];
+}
+
+export default function Summary(): JSX.Element {
+  const [storedData, setStoredData] = useState<StoredData[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedData = JSON.parse(localStorage.getItem("savedData"));
+      const savedData: StoredData[] = JSON.parse(
+        localStorage.getItem("savedData") || "[]"
+      );
       if (savedData) {
         setStoredData(savedData);
       }
     }
   }, []);
 
-  // Função para calcular o valor total dos serviços
-  const calculateTotal = (services) => {
+  const calculateTotal = (services: Service[]): number => {
     return services.reduce((total, service) => {
       return total + service.count * service.preco;
     }, 0);
   };
 
-  // Função para calcular o valor que a manicure receberá (35% do valor total)
-  const calculateManicureShare = (total) => {
-    const manicureShare = total * 0.35;
+  const calculateManicureShare = (total: number): string => {
+    const manicureShare: number = total * 0.35;
     return manicureShare.toFixed(2).replace(".", ",");
   };
 
-  // Função para formatar o valor com vírgula e duas casas decimais
-  const formatValue = (value) => {
+  const formatValue = (value: number): string => {
     return value.toFixed(2).replace(".", ",");
   };
 
@@ -38,8 +48,8 @@ export default function Summary() {
     router.push("/");
   };
 
-  const handleNameClick = (index) => {
-    setCurrentIndex(index === currentIndex ? null : index); // Alteração: Alternar currentIndex entre o índice atual e null se já estiver selecionado
+  const handleNameClick = (index: number) => {
+    setCurrentIndex(index === currentIndex ? null : index);
   };
 
   return (
@@ -47,9 +57,9 @@ export default function Summary() {
       <h1>Summary</h1>
       <div className="my-4 w-full">
         {storedData.map((data, index) => {
-          const total = calculateTotal(data.services);
-          const formattedTotal = formatValue(total);
-          const manicureShare = calculateManicureShare(total);
+          const total: number = calculateTotal(data.services);
+          const formattedTotal: string = formatValue(total);
+          const manicureShare: string = calculateManicureShare(total);
           return (
             <div
               className="w-full my-5"
@@ -62,7 +72,7 @@ export default function Summary() {
                 <h2>{data.name}</h2>
                 <div>{currentIndex === index ? "▲" : "▼"}</div>
               </button>
-              {currentIndex === index && ( // Alteração: Renderizar o conteúdo apenas se currentIndex corresponder ao índice atual
+              {currentIndex === index && (
                 <div className="flex flex-col justify-between w-full bg-slate-300">
                   <ul className="py-4">
                     {data.services

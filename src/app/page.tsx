@@ -7,7 +7,7 @@ export default function Home() {
   // const [selectedName, setSelectedName] = useState("");
   const router = useRouter();
 
-  const handleNameSelection = (name) => {
+  const handleNameSelection = (name: string) => {
     localStorage.setItem("selectedName", name);
     router.push("/Services");
   };
