@@ -105,7 +105,7 @@ export default function Services(): JSX.Element {
       newData,
     ];
     localStorage.setItem("savedData", JSON.stringify(updatedData));
-    router.push("/Summary");
+    router.push("/Sumary");
   };
 
   const handleServiceChange = (index: number, action: string) => {
